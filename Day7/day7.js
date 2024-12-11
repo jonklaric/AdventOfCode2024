@@ -87,28 +87,24 @@ function day7_part2(string_input) {
         let matches = false;
         for (var i=0; i < states.length; i++)
         {
-            let temp_result = eqn_parts[0];
-            let temp_number = 0;
-            for (let j=1; j < eqn_parts.length; j++) {
-
-                if (states[i][j-1] == "2") {
-                    temp_result = Math.pow(temp_result, nums[j]);
-                }
-                else if (states[i][j-1] == "1") {
-                    temp_result *= nums[j];
+            let temp_result = parseInt(eqn_parts[0]);
+            for (let j=0; j < states[i].length; j++) {
+                if (states[i][j] == "2") {
+                    let temp_string_result = String(temp_result) + eqn_parts[j+1]
+                    temp_result = parseInt(temp_string_result)
+                } else if (states[i][j] == "1") {
+                    temp_result *= parseInt(eqn_parts[j+1]);
                 }
                 else {
-                    temp_result += nums[j];
+                    temp_result += parseInt(eqn_parts[j+1]);
                 }
             }
-            if (temp_result == eqn_result) {
+            if (temp_result == parseInt(eqn_result)) {
                 matches = true;
-                matching_state = states[i];
                 break;
             }
         }
-        if (matches) {
-            //console.log(line, "with", matching_state, "matches!");
+        if (matches) {            
             final_result += parseInt(eqn_result);
         }
     }
@@ -119,4 +115,6 @@ function day7_part2(string_input) {
 console.log(day7_part1(test_input));
 
 const my_input = fs.readFileSync("my_input.txt", "utf8");
-console.log(day7_part1(my_input));
+//console.log(day7_part1(my_input));
+console.log(day7_part2(test_input));
+console.log(day7_part2(my_input));
