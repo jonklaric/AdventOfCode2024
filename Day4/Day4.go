@@ -87,7 +87,6 @@ func part_two(textgrid []string) int {
 		}
 	}
 	for row_num, row := range charGrid {
-		fmt.Println(row)
 		for col_num, char := range row {
 			if col_num < 1 || row_num < 1 {
 				continue
@@ -98,26 +97,11 @@ func part_two(textgrid []string) int {
 			if char != "A" {
 				continue
 			}
-
-			// topLeftRow := row_num - 1
-			// topLeftCol := col_num - 1
-			// topRightRow := row_num - 1
-			// topRightCol := col_num + 1
-			// bottomLeftRow := row_num + 1
-			// bottomLeftCol := col_num - 1
-			// bottomRightRow := row_num + 1
-			// bottomRightCol := col_num + 1
 			var diag_string1 string = charGrid[row_num-1][col_num-1] + charGrid[row_num+1][col_num+1]
 			var diag_string2 string = charGrid[row_num+1][col_num-1] + charGrid[row_num-1][col_num+1]
-			fmt.Println("Row num:", row_num, "; Col num:", col_num)
-			fmt.Println("diag_string1:", diag_string1, "; diag_string2:", diag_string2)
 			if isCrossMas(diag_string1) && isCrossMas(diag_string2) {
 				xmas_count++
 			}
-			// if isXMAS(temp_string) || isSAMX(temp_string) {
-			// 	//fmt.Println(xmas_count, ":", row_num, col_num, directions_strings[d], temp_string)
-			//
-			// }
 		}
 	}
 	return xmas_count
