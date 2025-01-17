@@ -18,9 +18,15 @@ func read_input(input_file string) []string {
 	}
 }
 
-func isXMAS(chars []string) bool {
-	test_string := sum_chars(chars)
+func isXMAS(test_string string) bool {
 	if test_string == "XMAS" {
+		return true
+	}
+	return false
+}
+
+func isSAMX(test_string string) bool {
+	if test_string == "SAMX" {
 		return true
 	}
 	return false
@@ -34,26 +40,96 @@ func sum_chars(chars []string) string {
 	return temp_string
 }
 
-func find_horizontal(textgrid [][]string) int {
-	var xmas_found int64 = 0
-	//var temp_string string = ""
-	for row_num := 0; row_num < len(textgrid); row_num++ {
-		for col_num := 0; col_num < len(textgrid[row_num]); col_num++ {
-			//temp_string += textgrid[row_num][col_num]
-			if col_num < len(textgrid[row_num])-4 {
-				if sum_chars(textgrid[row_num][col_num:col_num+4]) == "SAMX" || sum_chars(textgrid[row_num][col_num:col_num+4]) == "XMAS" {
-					
+func find_xmas(textgrid []string) int {
+	xmas_count := 0
+	directions := [8][2]int{{-1, 0}, {0, 1}, {1, 0}, {0, -1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}
+	for row_num, row := range textgrid {
+		row_split := strings.Split(row, "")
+		for col_num := range row_split {
+			for _, direction := range directions {
+				if string(textgrid[row_num][col_num]) != "X" {
+					continue
+				}
+				row_start := row_num + 3*direction[0]
+				col_start := col_num + 3*direction[1]
+				if row_start < 0 || row_start >= len(textgrid) || col_start < 0 || col_start >= len(textgrid[row_start]) {
+					continue
+				}
+				var temp_string string = ""
+				for i := 0; i < 4; i++ {
+					temp_string += string(textgrid[row_num+i*direction[0]][col_num+i*direction[1]])
+				}
+				if isXMAS(temp_string) || isSAMX(temp_string) {
+					xmas_count++
 				}
 			}
 		}
 	}
-	return int(xmas_found)
+	return xmas_count
+}
+
+func isCrossMas(testString string) bool {
+	if testString == "MS" || testString == "SM" {
+		return true
+	}
+	return false
+}
+
+func part_two(textgrid []string) int {
+	xmas_count := 0
+	//directions := [4][2]int{{-1, -1}, {-1, 1}, {1, 1}, {1, -1}}
+	charGrid := make([][]string, len(textgrid))
+	for i := 0; i < len(textgrid); i++ {
+		charGrid[i] = make([]string, len(textgrid[0]))
+		row_split := strings.Split(textgrid[i], "")
+		for j := 0; j < len(textgrid[0]); j++ {
+			charGrid[i][j] = row_split[j]
+		}
+	}
+	for row_num, row := range charGrid {
+		fmt.Println(row)
+		for col_num, char := range row {
+			if col_num < 1 || row_num < 1 {
+				continue
+			}
+			if col_num >= len(textgrid[0])-1 || row_num >= len(textgrid)-1 {
+				continue
+			}
+			if char != "A" {
+				continue
+			}
+
+			// topLeftRow := row_num - 1
+			// topLeftCol := col_num - 1
+			// topRightRow := row_num - 1
+			// topRightCol := col_num + 1
+			// bottomLeftRow := row_num + 1
+			// bottomLeftCol := col_num - 1
+			// bottomRightRow := row_num + 1
+			// bottomRightCol := col_num + 1
+			var diag_string1 string = charGrid[row_num-1][col_num-1] + charGrid[row_num+1][col_num+1]
+			var diag_string2 string = charGrid[row_num+1][col_num-1] + charGrid[row_num-1][col_num+1]
+			fmt.Println("Row num:", row_num, "; Col num:", col_num)
+			fmt.Println("diag_string1:", diag_string1, "; diag_string2:", diag_string2)
+			if isCrossMas(diag_string1) && isCrossMas(diag_string2) {
+				xmas_count++
+			}
+			// if isXMAS(temp_string) || isSAMX(temp_string) {
+			// 	//fmt.Println(xmas_count, ":", row_num, col_num, directions_strings[d], temp_string)
+			//
+			// }
+		}
+	}
+	return xmas_count
 }
 
 func main() {
 	fmt.Println("Welcome to day 4!")
-	grid := read_input("./test_input.txt")
-	for _, row := range grid {
-		fmt.Println(row)
-	}
+	grid := read_input("./my_input.txt")
+	xmas_count := find_xmas(grid)
+	fmt.Println("xmas_count:", xmas_count)
+	fmt.Println("Now onto day 4 part 2!")
+	grid2 := read_input("./my_input.txt")
+	xmas_count_part2 := part_two(grid2)
+	fmt.Println("xmas_count:", xmas_count_part2)
 }
